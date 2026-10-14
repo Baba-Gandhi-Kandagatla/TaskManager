@@ -1,0 +1,8 @@
+{
+  "name":"orbit-life-tracker",
+  "version":"2.0.0",
+  "private":true,
+  "description":"Customisable local-first task, habit and life tracker",
+  "scripts":{"start":"node server.js","build":"node scripts/build.js","check":"node --check app.js && node --check server.js && node --check src/cloud.js"},
+  "engines":{"node":">=18"}
+}

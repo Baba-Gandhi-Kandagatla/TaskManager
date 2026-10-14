@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f7f4ee">
+  <meta name="description" content="A calm, personal task and habit tracker.">
+  <title>Orbit — your life, in rhythm</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <section id="authScreen" class="auth-screen">
+    <form id="authForm" class="auth-card">
+      <span class="brand-mark large">O</span>
+      <span class="eyebrow">Welcome to Orbit</span>
+      <h1>Your life, in rhythm.</h1>
+      <p>Enter your name. A new name creates a profile; an existing name asks for its password.</p>
+      <label>Name<input name="username" required minlength="2" maxlength="30" autocomplete="username" placeholder="Your name"></label>
+      <label>Password<input name="password" type="password" required minlength="6" autocomplete="current-password" placeholder="At least 6 characters"></label>
+      <button class="primary wide" type="submit">Continue</button>
+      <small id="authHint">Profiles are stored on this device.</small>
+    </form>
+  </section>
+  <div class="app-shell hidden" id="appShell">
+    <header class="topbar">
+      <button class="brand" data-view="today" aria-label="Go to today">
+        <span class="brand-mark">O</span><span>Orbit</span>
+      </button>
+      <div class="top-actions">
+        <button id="installBtn" class="ghost hidden">Install</button>
+        <button id="quickAddBtn" class="primary">＋ Add</button>
+      </div>
+    </header>
+
+    <aside class="sidebar">
+      <nav>
+        <button class="nav-item active" data-view="today"><span>☀</span> Today</button>
+        <button class="nav-item" data-view="tasks"><span>✓</span> Tasks</button>
+        <button class="nav-item" data-view="habits"><span>↻</span> Habits</button>
+        <button class="nav-item" data-view="goals"><span>◎</span> Goals</button>
+        <button class="nav-item" data-view="analytics"><span>◒</span> Analytics</button>
+        <button class="nav-item" data-view="reflect"><span>✦</span> Reflect</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <button class="nav-item" data-view="settings"><span>⚙</span> Settings</button>
+        <p>Small steps count.</p>
+      </div>
+    </aside>
+
+    <main id="main" tabindex="-1"></main>
+
+    <nav class="mobile-nav">
+      <button class="active" data-view="today"><span>☀</span>Today</button>
+      <button data-view="tasks"><span>✓</span>Tasks</button>
+      <button data-view="habits"><span>↻</span>Habits</button>
+      <button data-view="goals"><span>◎</span>Goals</button>
+      <button data-view="analytics"><span>◒</span>Stats</button>
+      <button data-view="reflect"><span>✦</span>Reflect</button>
+    </nav>
+  </div>
+
+  <dialog id="itemDialog">
+    <form id="itemForm" method="dialog">
+      <div class="dialog-head">
+        <div><span class="eyebrow">New item</span><h2 id="dialogTitle">Add a task</h2></div>
+        <button type="button" class="icon-btn" data-close aria-label="Close">×</button>
+      </div>
+      <input type="hidden" name="id">
+      <label>What do you want to do?<input name="title" required maxlength="100" placeholder="e.g. Solve one LeetCode problem" autofocus></label>
+      <div class="form-grid">
+        <label>Type<select name="type"><option value="task">Task</option><option value="habit">Habit</option><option value="goal">Goal</option></select></label>
+        <label>Area<select name="area"><option>Career</option><option>Body</option><option>UPSC</option><option>Hobbies</option><option>Life Admin</option></select></label>
+      </div>
+      <div id="taskFields">
+        <div class="form-grid">
+          <label>When<select name="cadence"><option value="once">One time</option><option value="daily">Daily</option><option value="weekly">Weekly</option><option value="monthly">Monthly</option></select></label>
+          <label id="taskDueField">Due date <span class="subtle">(optional)</span><input name="due" type="date"></label>
+        </div>
+        <div id="weeklyTaskField" class="hidden"><label>Appears every<select name="weeklyDay"><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option><option value="0">Sunday</option></select></label></div>
+        <div id="monthlyTaskField" class="hidden"><label>Appears on day of month<input name="monthlyDay" type="number" min="1" max="31" value="1"></label></div>
+        <label>Priority<select name="priority"><option value="must">Must do</option><option value="small">Small thing</option><option value="joy">Joy</option><option value="later">Later</option></select></label>
+        <label>Effort points<select name="taskDifficulty"><option value="easy">Easy · 5 points</option><option value="medium" selected>Medium · 10 points</option><option value="hard">Hard · 20 points</option></select></label>
+      </div>
+      <div id="habitFields" class="hidden">
+        <label>Target days per week<input name="target" type="number" min="1" max="7" value="3"></label>
+        <fieldset class="weekday-picker"><legend>Scheduled days <span class="subtle">(optional)</span></legend>
+          <label><input type="checkbox" name="habitDays" value="1"><span>Mon</span></label><label><input type="checkbox" name="habitDays" value="2"><span>Tue</span></label><label><input type="checkbox" name="habitDays" value="3"><span>Wed</span></label><label><input type="checkbox" name="habitDays" value="4"><span>Thu</span></label><label><input type="checkbox" name="habitDays" value="5"><span>Fri</span></label><label><input type="checkbox" name="habitDays" value="6"><span>Sat</span></label><label><input type="checkbox" name="habitDays" value="0"><span>Sun</span></label>
+        </fieldset>
+        <p class="subtle">When specific days are selected, the weekly target automatically matches them.</p>
+        <label>Effort points<select name="habitDifficulty"><option value="easy">Easy · 5 points</option><option value="medium" selected>Medium · 10 points</option><option value="hard">Hard · 20 points</option></select></label>
+      </div>
+      <div id="goalFields" class="hidden">
+        <div class="form-grid">
+          <label>Target number<input name="goalTarget" type="number" min="1" value="1"></label>
+          <label>Unit<input name="unit" maxlength="20" placeholder="problems, books..."></label>
+        </div>
+        <label>Complete by <span class="subtle">(optional)</span><input name="goalDue" type="date"></label>
+        <label>Goal cycle <span class="subtle">(optional)</span><select name="goalPeriod"><option value="none">One-time goal</option><option value="month">Every month</option><option value="year">Every year</option></select></label>
+      </div>
+      <label>Notes<textarea name="notes" rows="3" maxlength="400" placeholder="Optional details"></textarea></label>
+      <button class="primary wide" type="submit">Save</button>
+    </form>
+  </dialog>
+
+  <dialog id="checkinDialog">
+    <form id="checkinForm" method="dialog">
+      <div class="dialog-head"><div><span class="eyebrow">Daily check-in</span><h2>Clear your head</h2></div><button type="button" class="icon-btn" data-close>×</button></div>
+      <label>Write freely<textarea name="entry" rows="8" placeholder="What happened? What do you need to remember? What feels heavy?"></textarea></label>
+      <label>Energy today<input name="mood" type="range" min="1" max="5" value="3"></label>
+      <button class="primary wide" type="submit">Save reflection</button>
+    </form>
+  </dialog>
+
+  <div id="toast" role="status" aria-live="polite"></div>
+  <script src="src/config.js?v=10"></script>
+  <script src="src/cloud.js?v=10"></script>
+  <script src="app.js?v=10"></script>
+</body>
+</html>
