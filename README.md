@@ -23,6 +23,15 @@ npm start
 
 Then open `http://localhost:8080`. No package installation is required.
 
+## Item analytics and quantities
+
+- Edit a task or habit and optionally set a daily quantity target and unit.
+- Use **Log** on a task, or **Log quantity** in its analytics panel, to record a daily amount. Saving replaces that date's value; completion checkboxes remain separate.
+- Open Analytics and choose an item. Pin it to restore its panel on subsequent visits.
+- Week, month and year calendars and graphs are calculated only for selected/pinned items, with results cached until a save or date-range change.
+- Missing quantity entries appear as graph gaps; a recorded zero remains an actual zero.
+- Profile storage is still a single Supabase JSON document. This reduces analytics calculation, not the size of the initial profile download.
+
 ## Production build
 
 ```bash
