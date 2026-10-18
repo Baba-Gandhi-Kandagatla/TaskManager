@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "taskmanager",
+  "compatibility_date": "2026-10-12",
+  "build": {
+    "command": "npm run build"
+  },
+  "assets": {
+    "directory": "./dist"
+  }
+}

@@ -42,6 +42,18 @@ The deployable static website is generated in `dist/`.
 
 ## Free deployment — Cloudflare Pages
 
+### Cloudflare Workers (Git-connected deployment)
+
+If your dashboard uses a deploy command, you created a Workers project. This is supported by `wrangler.jsonc`:
+
+- Build command: `npm run build`
+- Deploy command: `npm run deploy`
+- Root directory: repository root
+
+Wrangler runs the build before deployment and uploads only `dist/`. Never configure the asset directory as `.`: that includes dependencies and private source files.
+
+### Cloudflare Pages
+
 Connect the GitHub repository to Cloudflare Pages and use:
 
 - Build command: `npm run build`
