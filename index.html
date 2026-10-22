@@ -8,7 +8,8 @@
   <title>Orbit — your life, in rhythm</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="styles.css?v=12">
 </head>
 <body>
   <section id="authScreen" class="auth-screen">
@@ -29,7 +30,8 @@
         <span class="brand-mark">O</span><span>Orbit</span>
       </button>
       <div class="top-actions">
-        <button id="installBtn" class="ghost hidden">Install</button>
+        <button id="installBtn" class="ghost">Install</button>
+        <button class="icon-btn" data-view="settings" aria-label="Settings" title="Settings">⚙</button>
         <button id="quickAddBtn" class="primary">＋ Add</button>
       </div>
     </header>
@@ -117,7 +119,8 @@
   <div id="toast" role="status" aria-live="polite"></div>
   <script src="src/config.js?v=10"></script>
   <script src="src/cloud.js?v=10"></script>
-  <script src="app.js?v=11"></script>
+  <script src="src/install.js?v=12"></script>
+  <script src="app.js?v=12"></script>
   <script src="src/analytics.js?v=11"></script>
 </body>
 </html>
