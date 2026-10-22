@@ -105,5 +105,18 @@ function accounts(){try{return JSON.parse(localStorage.getItem("orbit-accounts")
 async function login(username,password){let key=username.trim().toLowerCase().replace(/[^a-z0-9_-]+/g,"-").replace(/^-|-$/g,"");if(!key)throw Error("Use at least one letter or number.");currentUser=key;if(window.OrbitCloud?.configured()){await window.OrbitCloud.authenticate(key,password,username.trim());state=await window.OrbitCloud.load()||load();state.settings=state.settings||{};state.settings.areas=state.settings.areas||[...DEFAULT_AREAS];state.settings.name=state.settings.name||username.trim();save()}else{let all=accounts(),account=all[key];if(account){let hash=await passwordHash(password,account.salt);if(hash!==account.hash)throw Error("Incorrect password.")}else{let salt=crypto.randomUUID(),hash=await passwordHash(password,salt);all[key]={display:username.trim(),salt,hash,createdAt:new Date().toISOString()};localStorage.setItem("orbit-accounts",JSON.stringify(all));let old=localStorage.getItem("orbit-data");if(old&&!localStorage.getItem(`orbit-user-${key}`))localStorage.setItem(`orbit-user-${key}`,old)}state=load();state.settings.name=state.settings.name||all[key].display;save()}sessionStorage.setItem("orbit-session",key);document.querySelector("#authScreen").classList.add("hidden");document.querySelector("#appShell").classList.remove("hidden");render()}
 async function logout(){sessionStorage.removeItem("orbit-session");if(window.OrbitCloud?.configured())await window.OrbitCloud.logout();currentUser=null;state=null;document.querySelector("#appShell").classList.add("hidden");document.querySelector("#authScreen").classList.remove("hidden");document.querySelector("#authForm").reset()}
 document.querySelector("#authForm").onsubmit=async e=>{e.preventDefault();let hint=document.querySelector("#authHint"),d=Object.fromEntries(new FormData(e.currentTarget));hint.textContent="Checking profile…";hint.classList.remove("auth-error");try{await login(d.username,d.password)}catch(err){hint.textContent=err.message;hint.classList.add("auth-error")}};
-let session=sessionStorage.getItem("orbit-session"),known=accounts();if(session&&(window.OrbitCloud?.configured()||known[session])){currentUser=session;state=load();document.querySelector("#authScreen").classList.add("hidden");document.querySelector("#appShell").classList.remove("hidden");render()}
-document.querySelector("#authHint").textContent=window.OrbitCloud?.configured()?"Cloud account — available on all your devices.":"Local profile — configure Supabase for cross-device sync.";
+// Optional screens must not prevent core screens from rendering if a script fails to load.
+function analyticsView(){return `${header("Analytics","Analytics unavailable","Please reload to try loading this screen again.")}<a class="ghost" href="">Reload Orbit</a>`}
+function startOrbit(){
+  const session=sessionStorage.getItem("orbit-session"),known=accounts();
+  if(session&&(window.OrbitCloud?.configured()||known[session])){
+    currentUser=session;state=load();
+    document.querySelector("#authScreen").classList.add("hidden");
+    document.querySelector("#appShell").classList.remove("hidden");
+    render();
+  }
+  document.querySelector("#authHint").textContent=window.OrbitCloud?.configured()?"Cloud account — available on all your devices.":"Local profile — configure Supabase for cross-device sync.";
+}
+// Wait for subsequent scripts (analytics and its event bindings) before session restoration.
+if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",startOrbit,{once:true});
+else startOrbit();

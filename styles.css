@@ -15,3 +15,5 @@ dialog{border:0;border-radius:24px;padding:0;width:min(540px,calc(100% - 24px));
 @media(max-width:520px){.goal-grid,.form-grid{grid-template-columns:1fr}.date-badge{display:none}.card{padding:18px}.habit-row{grid-template-columns:1fr}.habit-days{justify-content:space-between}.day-dot{width:34px;height:38px}.habit-date-head{display:none}.chart{gap:5px;overflow-x:auto}.chart-col{min-width:28px}.top-actions{gap:6px}.top-actions .ghost{display:inline-flex;padding:8px 10px}.brand{gap:6px;font-size:18px}}
 
 .install-guide{padding:24px}.install-guide p{line-height:1.6}
+.mobile-settings{display:none}
+@media(max-width:850px){.mobile-settings{display:inline-block}}
