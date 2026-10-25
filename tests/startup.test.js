@@ -72,3 +72,17 @@ test('expired cloud session returns to login instead of trusting username marker
   assert.equal(b.nodes.has('main'),false);
   assert.equal(b.context.localStorage.getItem('orbit-session'),null);
 });
+test('calendar integrates with existing profiles and reset clears calendar data',async()=>{
+  const b=browser();vm.runInContext(fs.readFileSync('app.js','utf8'),b.context);
+  vm.runInContext(fs.readFileSync('src/analytics.js','utf8'),b.context);
+  b.context.window.OrbitCalendarModel=require('../src/calendar-model');
+  vm.runInContext(fs.readFileSync('src/calendar.js','utf8'),b.context);
+  await b.events.DOMContentLoaded();
+  vm.runInContext("go('calendar')",b.context);
+  assert.match(b.nodes.get('main').innerHTML,/New|Event/);
+  vm.runInContext("state.events=[{id:'a',title:'Birthday',date:todayKey(),repeat:'yearly'}];go('today')",b.context);
+  assert.match(b.nodes.get('main').innerHTML,/Birthday/);
+  vm.runInContext('resetProfileData()',b.context);
+  const saved=JSON.parse(b.context.localStorage.getItem('orbit-user-baba'));
+  assert.deepEqual(saved.events,[]);
+});

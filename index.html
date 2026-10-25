@@ -9,7 +9,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/icon-192.png">
-  <link rel="stylesheet" href="styles.css?v=14">
+  <link rel="stylesheet" href="styles.css?v=18">
 </head>
 <body>
   <section id="authScreen" class="auth-screen">
@@ -40,6 +40,7 @@
       <nav>
         <button class="nav-item active" data-view="today"><span>☀</span> Today</button>
         <button class="nav-item" data-view="tasks"><span>✓</span> Tasks</button>
+        <button class="nav-item" data-view="calendar"><span>▦</span> Calendar</button>
         <button class="nav-item" data-view="habits"><span>↻</span> Habits</button>
         <button class="nav-item" data-view="goals"><span>◎</span> Goals</button>
         <button class="nav-item" data-view="analytics"><span>◒</span> Analytics</button>
@@ -56,6 +57,7 @@
     <nav class="mobile-nav">
       <button class="active" data-view="today"><span>☀</span>Today</button>
       <button data-view="tasks"><span>✓</span>Tasks</button>
+      <button data-view="calendar"><span>▦</span>Calendar</button>
       <button data-view="habits"><span>↻</span>Habits</button>
       <button data-view="goals"><span>◎</span>Goals</button>
       <button data-view="analytics"><span>◒</span>Stats</button>
@@ -120,7 +122,9 @@
   <script src="src/config.js?v=10"></script>
   <script src="src/cloud.js?v=17"></script>
   <script src="src/install.js?v=12"></script>
-  <script src="app.js?v=17"></script>
+  <script src="app.js?v=18"></script>
   <script src="src/analytics.js?v=13"></script>
+  <script src="src/calendar-model.js?v=18"></script>
+  <script src="src/calendar.js?v=18"></script>
 </body>
 </html>
