@@ -8,7 +8,7 @@ function browser(){
   const events={},nodes=new Map(),storage=new Map([['orbit-session','baba'],['orbit-accounts',JSON.stringify({baba:{display:'Baba'}})]]);
   function element(selector){if(!nodes.has(selector))nodes.set(selector,{innerHTML:'',textContent:'',classList:{add(){},remove(){},toggle(){}},elements:{type:{},cadence:{}},addEventListener(){},focus(){}});return nodes.get(selector)}
   const getItem=key=>storage.get(key)||null;
-  const context={Date,crypto:webcrypto,structuredClone,console,setInterval(){},setTimeout(){},clearTimeout(){},scrollTo(){},confirm:()=>true,sessionStorage:{getItem},localStorage:{getItem,setItem:(key,value)=>storage.set(key,value)},navigator:{},document:{readyState:'loading',querySelector:element,querySelectorAll:()=>[],addEventListener:(event,fn)=>{events[event]=fn}},window:{addEventListener(){}}};
+  const context={Date,crypto:webcrypto,structuredClone,console,setInterval(){},setTimeout(){},clearTimeout(){},scrollTo(){},confirm:()=>true,sessionStorage:{getItem,removeItem:key=>storage.delete(key)},localStorage:{getItem,setItem:(key,value)=>storage.set(key,value),removeItem:key=>storage.delete(key)},navigator:{},document:{readyState:'loading',querySelector:element,querySelectorAll:()=>[],addEventListener:(event,fn)=>{events[event]=fn}},window:{addEventListener(){}}};
   vm.createContext(context);return {context,events,nodes};
 }
 test('restored session waits until analytics and bindings load; all screens render',()=>{
@@ -49,4 +49,26 @@ test('canceling reset preserves saved activity',()=>{
   const before=vm.runInContext('JSON.stringify(state)',b.context);
   vm.runInContext('resetProfileData()',b.context);
   assert.equal(vm.runInContext('JSON.stringify(state)',b.context),before);
+});
+test('installed app reopens using persistent login without tab session storage',async()=>{
+  const b=browser();b.context.sessionStorage={getItem:()=>null};
+  vm.runInContext(fs.readFileSync('app.js','utf8'),b.context);
+  await b.events.DOMContentLoaded();
+  assert.match(b.nodes.get('main').innerHTML,/Good /);
+});
+test('cloud user restores after app closure without a local username marker',async()=>{
+  const b=browser();b.context.localStorage.removeItem('orbit-session');
+  b.context.sessionStorage={getItem:()=>null};
+  b.context.window.OrbitCloud={configured:()=>true,restore:async()=>({email:'baba@movaacbofxvqrvahlkdl.supabase.co'})};
+  vm.runInContext(fs.readFileSync('app.js','utf8'),b.context);
+  await b.events.DOMContentLoaded();
+  assert.match(b.nodes.get('main').innerHTML,/Good /);
+  assert.equal(b.context.localStorage.getItem('orbit-session'),'baba');
+});
+test('expired cloud session returns to login instead of trusting username marker',async()=>{
+  const b=browser();b.context.window.OrbitCloud={configured:()=>true,restore:async()=>null};
+  vm.runInContext(fs.readFileSync('app.js','utf8'),b.context);
+  await b.events.DOMContentLoaded();
+  assert.equal(b.nodes.has('main'),false);
+  assert.equal(b.context.localStorage.getItem('orbit-session'),null);
 });

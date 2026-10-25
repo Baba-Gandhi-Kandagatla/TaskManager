@@ -8,7 +8,7 @@
   async function request(path,{method="GET",body,token=session?.access_token,headers={}}={}){
     const c=cfg(),res=await fetch(`${c.supabaseUrl}${path}`,{method,headers:{apikey:c.supabaseAnonKey,"Content-Type":"application/json",...(token?{Authorization:`Bearer ${token}`}:{ }),...headers},body:body?JSON.stringify(body):undefined});
     const text=await res.text(),data=text?JSON.parse(text):null;
-    if(!res.ok)throw Error(data?.msg||data?.message||data?.error_description||"Cloud request failed");
+    if(!res.ok){const error=Error(data?.msg||data?.message||data?.error_description||"Cloud request failed");error.status=res.status;throw error;}
     return data;
   }
   async function authenticate(username,password,display){
@@ -36,5 +36,13 @@
   async function load(){await refresh();let rows=await request(`/rest/v1/user_data?user_id=eq.${session.user.id}&select=state`);return rows?.[0]?.state||null}
   async function save(state){await refresh();return request("/rest/v1/user_data?on_conflict=user_id",{method:"POST",body:{user_id:session.user.id,state,updated_at:new Date().toISOString()},headers:{Prefer:"resolution=merge-duplicates,return=minimal"}})}
   async function logout(){if(session?.access_token)try{await request("/auth/v1/logout",{method:"POST"})}catch{}session=null;localStorage.removeItem("orbit-cloud-session")}
-  window.OrbitCloud={configured,authenticate,load,save,logout};
+  async function restore(){
+    try{return await refresh()?session.user:null;}
+    catch(error){
+      if(error.status===400||error.status===401||error.status===403){session=null;localStorage.removeItem("orbit-cloud-session");return null;}
+      // Offline/transient failures should not sign someone out of their saved local profile.
+      return session?.user||null;
+    }
+  }
+  window.OrbitCloud={configured,authenticate,load,save,logout,restore};
 })();
